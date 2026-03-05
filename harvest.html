@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>伴读书房 - 宝贝首月大盘点</title>
+    <style>
+        /* ====== 全局基础设置 (100% 离线，无外部依赖) ====== */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --brand-light: #FFF0ED; --brand: #F29C8B; --brand-dark: #D87A68;
+            --brand-accent: #8EB6A8; --brand-yellow: #FCD884; --brand-blue: #9DBAD5;
+            --text-main: #333333; --text-sub: #666666; --text-light: #999999;
+            --bg-page: #F7F9FC;
+        }
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; }
+        
+        /* ====== 核心容器 ====== */
+        .app-container {
+            max-width: 480px; margin: 0 auto; background: linear-gradient(180deg, #FFF0ED 0%, #FFFFFF 15%, #FFFFFF 100%);
+            min-height: 100vh; position: relative; overflow-x: hidden; padding-bottom: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* ====== 动画与装饰 ====== */
+        .fade-up { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .circle-bg { position: absolute; border-radius: 50%; filter: blur(40px); z-index: 0; opacity: 0.5; }
+
+        /* ====== 卡片 UI ====== */
+        .card {
+            background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 20px;
+            box-shadow: 0 8px 24px rgba(242, 156, 139, 0.12); margin: 0 20px 24px 20px;
+            position: relative; z-index: 10; border: 1px solid rgba(255,255,255,1);
+        }
+        .card-title { font-size: 18px; font-weight: bold; color: var(--brand-dark); margin-bottom: 12px; display: flex; align-items: center; }
+        .card-title span { font-size: 22px; margin-right: 8px; }
+        
+        /* 痛点解决框 */
+        .pain-point-box { background: rgba(252, 216, 132, 0.2); border: 1px dashed var(--brand-yellow); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; }
+        .pain-point-title { font-size: 12px; font-weight: bold; color: #d97706; margin-bottom: 4px; }
+        .pain-point-text { font-size: 12px; color: var(--text-sub); }
+
+        /* ====== 模块专属样式 ====== */
+        /* 1. 字词胶囊 */
+        .vocab-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .pill { padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--bg-page); color: var(--text-main); border: 1px solid #eee; }
+        .pill.brand { background: var(--brand-light); color: var(--brand-dark); border-color: var(--brand); }
+        .radicals-box { background: #f8fafc; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .radical-item { font-size: 12px; }
+        .radical-item strong { color: var(--brand-accent); }
+
+        /* 2. 佳句列表 */
+        .sentence-list { display: flex; flex-direction: column; gap: 12px; }
+        .sentence-item { background: #fff; border-left: 4px solid var(--brand); padding: 12px; border-radius: 0 12px 12px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .sentence-text { font-size: 13px; color: var(--text-main); font-family: serif; margin-bottom: 8px; }
+        .sentence-tech { font-size: 11px; color: var(--brand-dark); background: var(--brand-light); display: inline-block; padding: 2px 8px; border-radius: 4px; }
+
+        /* 3. 翻转卡片 (主旨) */
+        .flip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .flip-card { height: 110px; perspective: 1000px; cursor: pointer; }
+        .flip-inner { width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; position: relative; }
+        .flip-card.active .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 12px; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .flip-front { background: #fff; border: 2px solid var(--brand-light); }
+        .flip-back { background: var(--brand-accent); color: white; transform: rotateY(180deg); font-size: 12px; }
+
+        /* 4. 写话技法切换 (Tab) */
+        .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+        .tab-btn { padding: 10px; border-radius: 12px; font-size: 13px; font-weight: bold; text-align: center; background: #f1f5f9; color: var(--text-sub); border: none; outline: none; transition: all 0.3s; }
+        .tab-btn.active { background: var(--brand); color: white; box-shadow: 0 4px 10px rgba(242, 156, 139, 0.4); }
+        .tab-content { display: none; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 16px; animation: fadeIn 0.4s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .method-step { position: relative; padding-left: 24px; margin-bottom: 12px; }
+        .method-step::before { content: ''; position: absolute; left: 6px; top: 6px; width: 8px; height: 8px; background: var(--brand-yellow); border-radius: 50%; }
+        .method-step::after { content: ''; position: absolute; left: 9px; top: 14px; width: 2px; height: calc(100% + 4px); background: rgba(252, 216, 132, 0.3); }
+        .method-step:last-child::after { display: none; }
+        .step-title { font-size: 13px; font-weight: bold; color: var(--text-main); }
+        .step-desc { font-size: 12px; color: var(--text-sub); }
+        
+        .example-box { background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 12px; color: var(--text-sub); border-left: 3px solid var(--brand-accent); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- 装饰背景 -->
+    <div class="circle-bg" style="background: var(--brand); width: 300px; height: 300px; top: -100px; left: -100px;"></div>
+    <div class="circle-bg" style="background: var(--brand-yellow); width: 200px; height: 200px; top: 30%; right: -50px;"></div>
+    <div class="circle-bg" style="background: var(--brand-blue); width: 250px; height: 250px; bottom: 10%; left: -50px;"></div>
+
+    <!-- 头部引导 -->
+    <header class="fade-up" style="padding: 40px 20px 20px; text-align: center; position: relative; z-index: 10;">
+        <div style="font-size: 40px; margin-bottom: 10px;">💌</div>
+        <h1 style="font-size: 24px; font-weight: bold; color: var(--brand-dark); margin-bottom: 16px;">亲爱的家长，见信好！</h1>
+        <div style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); padding: 16px; border-radius: 16px; text-align: left; font-size: 13px; color: var(--text-sub); box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            时间飞逝，伴读书房首月阅读圆满结束啦。<br><br>
+            下学期升入<strong style="color: var(--brand-dark);">一年级下册</strong>，孩子们将面临三大挑战：<br>
+            <span style="color: var(--brand);">1. 课文篇幅变长，拼音减少；</span><br>
+            <span style="color: var(--brand);">2. 词句积累要求变高；</span><br>
+            <span style="color: var(--brand);">3. 看图写话从“写一句”变成“写一段”。</span><br><br>
+            为了迎战1下，我们在这个月做足了储备。这份<strong style="color: var(--brand-dark);">全景成长大盘点</strong>，请您查收！
+        </div>
+    </header>
+
+    <!-- 模块1：阅读数据 -->
+    <div class="card fade-up">
+        <div class="card-title"><span>📚</span>阅读大丰收</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 迎战1下：阅读耐力与识字量储备</div>
+            <div class="pain-point-text">长课文读不下去？我们在首月通过有趣的故事，提前拉长了孩子的阅读耐力。</div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 36px; font-weight: bold; color: var(--brand-dark); line-height: 1;">14,410</div>
+            <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">本月累计阅读字数 (约)</div>
+        </div>
+        
+        <div style="background: var(--bg-page); padding: 12px; border-radius: 12px; font-size: 13px;">
+            <strong>📖 完成整本书阅读：《笨狼的故事》</strong><br>
+            <span style="color: var(--text-sub);">一只天真善良、乐于助人，却总闹笑话的小狼的成长故事。孩子在欢笑中完成了万字级的阅读挑战！</span>
+        </div>
+    </div>
+
+    <!-- 模块2：词句积累 -->
+    <div class="card fade-up">
+        <div class="card-title"><span>🌟</span>词句百宝箱</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 迎战1下：告别干瘪的口水话</div>
+            <div class="pain-point-text">写句子只会用“开心/美丽”？我们给孩子装满了丰富的“词句弹药库”。</div>
+        </div>
+
+        <!-- 基础字词 -->
+        <h3 style="font-size: 14px; font-weight: bold; margin: 16px 0 8px; color: var(--brand-dark);">🎈 伴读生字积累 (17个)：</h3>
+        <div class="vocab-grid">
+            <span class="pill">地</span><span class="pill">住</span><span class="pill">草</span><span class="pill">他</span><span class="pill">青</span>
+            <span class="pill">兔</span><span class="pill">讲</span><span class="pill">画</span><span class="pill">乐</span><span class="pill">书</span>
+            <span class="pill">进</span><span class="pill">红</span><span class="pill">家</span><span class="pill">色</span><span class="pill">自</span>
+            <span class="pill">知</span><span class="pill">道</span>
+        </div>
+
+        <!-- 偏旁字族 -->
+        <h3 style="font-size: 14px; font-weight: bold; margin: 16px 0 8px; color: var(--brand-dark);">🧩 偏旁归类识字法：</h3>
+        <div class="radicals-box">
+            <div class="radical-item"><strong>口字旁：</strong>吃、呼、吹、听</div>
+            <div class="radical-item"><strong>提手旁：</strong>打、拉、拍、捉</div>
+            <div class="radical-item"><strong>言字旁：</strong>课、话、语、讲</div>
+            <div class="radical-item"><strong>鸟字族：</strong>鸦、鸭、鸡、鸣</div>
+        </div>
+
+        <!-- 8大佳句 (精华展示) -->
+        <h3 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px; color: var(--brand-dark);">✨ 8大神仙句子赏析：</h3>
+        <div class="sentence-list">
+            <!-- 限制高度，内部滚动，防止页面过长 -->
+            <div style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+                <div class="sentence-item">
+                    <div class="sentence-text">“白色的小木屋，明亮的小木窗，窗子上挂着树叶编成的窗帘，春夏秋冬不停地换。”</div>
+                    <div class="sentence-tech">✅ 整体到局部，颜色词鲜明</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“雨点敲打着小木屋，小木屋‘叮叮当当’，好像在唱歌。”</div>
+                    <div class="sentence-tech">✅ 拟声词 + 拟人</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“我把它种在茶杯里，也一样知道了结果嘛！”</div>
+                    <div class="sentence-tech">✅ 口语化表达，充满童趣</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“风刮了一整夜，雨下了一整夜，笨狼撑着伞，在树上坐了一整夜。”</div>
+                    <div class="sentence-tech">✅ 句式工整，画面感极强</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“看到春姑娘把大地打扮得这么美，笨狼羡慕极了，也想当个了不起的画家。”</div>
+                    <div class="sentence-tech">✅ 拟人修辞，连贯自然</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“今天阳光灿烂，白白的地面晃得长尾鼠的眼睛有点儿花。”</div>
+                    <div class="sentence-tech">✅ 动作描写(晃)，因果逻辑</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“那些书，一本又一本，好像小小船，全都浮在水面上。”</div>
+                    <div class="sentence-tech">✅ 生动比喻 + 重复句式</div>
+                </div>
+                <div class="sentence-item">
+                    <div class="sentence-text">“一阵风从窗口溜进来，看见桌上有张字条，把它轻轻地吹起来玩。”</div>
+                    <div class="sentence-tech">✅ 拟人手法，动作连贯</div>
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 11px; color: var(--text-light);">（👆 框内可上下滑动查看全部8句）</div>
+        </div>
+    </div>
+
+    <!-- 模块3：阅读主旨 -->
+    <div class="card fade-up">
+        <div class="card-title"><span>🐺</span>深度思考与共情</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 迎战1下：阅读理解找准主旨</div>
+            <div class="pain-point-text">读完故事不知道讲了啥？我们在阅读中提炼了4大人生道理，培养孩子的归纳概括能力。</div>
+        </div>
+
+        <div style="text-align: center; font-size: 12px; color: var(--brand); font-weight: bold; margin-bottom: 12px; animation: pulse 2s infinite;">👇 点击卡片，查看宝贝的感悟 👇</div>
+        <div class="flip-grid">
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front"><div style="font-size:24px;margin-bottom:4px;">🌱</div><div style="font-weight:bold;font-size:14px;color:#333;">关于“犯错”</div></div>
+                    <div class="flip-back">错误是成长的脚印，我们在犯错中慢慢长出翅膀。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front"><div style="font-size:24px;margin-bottom:4px;">💪</div><div style="font-weight:bold;font-size:14px;color:#333;">关于“困难”</div></div>
+                    <div class="flip-back">遇到困难别放弃，多动脑筋想办法，坚持就能成功。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front"><div style="font-size:24px;margin-bottom:4px;">🤝</div><div style="font-weight:bold;font-size:14px;color:#333;">关于“助人”</div></div>
+                    <div class="flip-back">乐于助人心肠好，但防人之心也不可少哦。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front"><div style="font-size:24px;margin-bottom:4px;">👀</div><div style="font-weight:bold;font-size:14px;color:#333;">关于“看人”</div></div>
+                    <div class="flip-back">人不可貌相，海水不可斗量。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块4：硬核写话技法 (核心重点) -->
+    <div class="card fade-up" style="border: 2px solid var(--brand-yellow);">
+        <div class="card-title"><span>✍️</span>硬核写话四大技法</div>
+        <div class="pain-point-box" style="background: rgba(142, 182, 168, 0.1); border-color: var(--brand-accent);">
+            <div class="pain-point-title" style="color: var(--brand-accent);">🎯 迎战1下期末：看图写“一段话”</div>
+            <div class="pain-point-text">不知道怎么构思？条理混乱？本月我们手把手教了4大结构法，完美覆盖写人、写景、记事！</div>
+        </div>
+
+        <div style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 12px;">👇 点击下方按钮，查看具体技法 👇</div>
+        
+        <!-- Tab 按钮区 -->
+        <div class="method-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab1', this)">1.故事称号法<br><span style="font-size:11px;font-weight:normal;">(写人)</span></button>
+            <button class="tab-btn" onclick="switchTab('tab2', this)">2.三画法<br><span style="font-size:11px;font-weight:normal;">(写景)</span></button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">3.找盖饭法<br><span style="font-size:11px;font-weight:normal;">(犯错记事)</span></button>
+            <button class="tab-btn" onclick="switchTab('tab4', this)">4.关联词法<br><span style="font-size:11px;font-weight:normal;">(发表观点)</span></button>
+        </div>
+
+        <!-- Tab 内容区 -->
+        <!-- 技法1：故事称号法 -->
+        <div id="tab1" class="tab-content active">
+            <div class="method-step">
+                <div class="step-title">开头：确认身份</div><div class="step-desc">你要介绍的人物是谁？</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">中间：称号 + 事迹</div><div class="step-desc">他有什么称号（如小迷糊/万能修理工）？做过什么深刻的事？</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">结尾：抒发情感</div><div class="step-desc">你对他有什么情感？</div>
+            </div>
+            <div class="example-box">
+                <strong>📝 宝贝实战运用：</strong><br>
+                “大家好，我介绍我的爸爸。有时他是个‘万能修理工’，东西坏了他总能修好。这就是我爸爸，我非常爱他。”
+            </div>
+        </div>
+
+        <!-- 技法2：三画法 -->
+        <div id="tab2" class="tab-content">
+            <div class="method-step">
+                <div class="step-title">第一步：点明季节</div><div class="step-desc">观察图片，明确是哪个季节。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">第二步：空间顺序描述</div><div class="step-desc">按“天上 -> 树上 -> 地上”的层次观察并描写。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">第三步：赞美景色</div><div class="step-desc">表达对这个景色的喜爱。</div>
+            </div>
+            <div class="example-box">
+                <strong>📝 宝贝实战运用：</strong><br>
+                “冬天到了，冬姑娘在天上画了雪花，树上画了梅花，地上画了白茫茫的积雪像棉被。冬天真美！”
+            </div>
+        </div>
+
+        <!-- 技法3：找盖饭法 -->
+        <div id="tab3" class="tab-content">
+            <div class="method-step">
+                <div class="step-title">开头：找行为 (找)</div><div class="step-desc">找到图中人物的错误（如踩草坪、扔垃圾）。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">中间：劝改正 (盖-改)</div><div class="step-desc">说错误，讲做法。劝导他改正。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">结尾：写反思 (饭-反)</div><div class="step-desc">反思错误行为，大家一起爱护环境。</div>
+            </div>
+            <div class="example-box">
+                <strong>📝 宝贝实战运用：</strong><br>
+                “小明在扔香蕉皮。小红说不能乱扔，环境会变脏。小明反思后把垃圾扔进了垃圾桶。”
+            </div>
+        </div>
+
+        <!-- 技法4：关联词法 -->
+        <div id="tab4" class="tab-content">
+            <div class="method-step">
+                <div class="step-title">开头：明确观点</div><div class="step-desc">我认为这个做法是对还是错？</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">中间：运用关联词</div><div class="step-desc">用“因为...所以...”或“虽然...但是...”说明理由。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">结尾：总结观点</div><div class="step-desc">再次强化自己的看法。</div>
+            </div>
+            <div class="example-box">
+                <strong>📝 宝贝实战运用：</strong><br>
+                “我认为在公共场合大声打电话不对。因为这会打扰别人，所以这是一种不文明的行为。”
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部寄语 -->
+    <div class="fade-up" style="text-align: center; padding: 20px;">
+        <div style="font-size: 40px; margin-bottom: 16px;">🌱</div>
+        <p style="font-family: serif; color: var(--text-sub); font-size: 14px;">
+            阅读是一粒神奇的种子，<br>
+            我们在寒假为一年级下册，<br>
+            播下了最坚实的土壤。<br>
+            感谢您的用心陪伴，<br>
+            新学期，我们顶峰相见！
+        </p>
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #ccc;">
+            <p style="font-weight: bold; color: var(--brand-dark); font-size: 16px;">您的班主任老师</p>
+            <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">学而思网校 · 伴读书房</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. 滚动动画监听 (Intersection Observer)
+    document.addEventListener("DOMContentLoaded", function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 }); // 元素出现15%即触发动画
+
+        const elements = document.querySelectorAll('.fade-up');
+        elements.forEach(el => observer.observe(el));
+    });
+
+    // 2. 写话技法 Tab 切换逻辑
+    function switchTab(tabId, btnElement) {
+        // 移除所有按钮和内容的 active 类
+        const tabs = document.querySelectorAll('.tab-content');
+        const btns = document.querySelectorAll('.tab-btn');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        btns.forEach(btn => btn.classList.remove('active'));
+
+        // 激活当前点击的内容和按钮
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+</script>
+</body>
+</html>
