@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>伴读书房 - 三年级首月成长大盘点</title>
+    <style>
+        /* ====== 全局基础设置 (100% 离线原生手写，微信内绝对秒开) ====== */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            /* 三年级专属知性配色：翡翠绿 + 暖灿金 */
+            --brand-light: #ECFDF5; /* 极浅绿，背景用 */
+            --brand: #10B981;       /* 翡翠绿，主色 */
+            --brand-dark: #047857;  /* 深翠绿，标题用 */
+            --brand-accent: #D97706;/* 暖灿金，强调色 */
+            --brand-yellow: #FEF3C7;/* 浅暖金，背景用 */
+            --text-main: #334155;   /* 正文颜色 */
+            --text-sub: #475569;    /* 次要文本 */
+            --text-light: #94A3B8;  /* 辅助文本 */
+            --bg-page: #F8FAFC;     /* 页面底色 */
+        }
+        
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: #e2e8f0; /* PC端背景 */
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+
+        /* ====== 核心手机端容器 ====== */
+        .app-container {
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: linear-gradient(180deg, #ECFDF5 0%, #FFFFFF 10%, #FFFFFF 100%);
+            min-height: 100vh; 
+            position: relative; 
+            overflow-x: hidden; 
+            padding-bottom: 40px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* ====== 背景装饰 ====== */
+        .circle-bg { 
+            position: absolute; 
+            border-radius: 50%; 
+            filter: blur(40px); 
+            z-index: 0; 
+            opacity: 0.3; 
+        }
+
+        /* ====== 滚动加载动画 ====== */
+        .fade-up { 
+            opacity: 0; 
+            transform: translateY(25px); 
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .fade-up.visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+
+        /* ====== 通用卡片样式 ====== */
+        .card {
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 20px; 
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(4, 120, 87, 0.08); 
+            margin: 0 20px 24px 20px;
+            position: relative; 
+            z-index: 10; 
+            border: 1px solid rgba(255,255,255,1);
+        }
+        .card-title { 
+            font-size: 19px; 
+            font-weight: bold; 
+            color: var(--brand-dark); 
+            margin-bottom: 14px; 
+            display: flex; 
+            align-items: center; 
+        }
+        .card-title span { font-size: 24px; margin-right: 8px; }
+
+        /* ====== 大白话痛点解说框 ====== */
+        .pain-point-box { 
+            background: linear-gradient(to right, #FEF3C7, #FFFBEB); 
+            border-left: 4px solid var(--brand-accent); 
+            border-radius: 0 12px 12px 0; 
+            padding: 14px 16px; 
+            margin-bottom: 20px; 
+        }
+        .pain-point-title { 
+            font-size: 14px; 
+            font-weight: bold; 
+            color: #B45309; 
+            margin-bottom: 6px; 
+            display: flex; 
+            align-items: center;
+        }
+        .pain-point-text { 
+            font-size: 13px; 
+            color: #78350F; 
+            line-height: 1.6; 
+        }
+        .pain-point-highlight {
+            background: rgba(217, 119, 6, 0.15);
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* ====== 模块1：数据展示 ====== */
+        .data-showcase { text-align: center; margin: 24px 0; }
+        .data-number { font-size: 46px; font-weight: bold; color: var(--brand-dark); line-height: 1; font-family: serif;}
+        .data-label { font-size: 13px; color: var(--text-light); margin-top: 8px; letter-spacing: 1px;}
+        .achievement-box { background: var(--bg-page); padding: 16px; border-radius: 12px; font-size: 13px; border: 1px solid #E2E8F0; }
+
+        /* ====== 模块2：词汇与句子 ====== */
+        .vocab-group { margin-bottom: 18px; }
+        .vocab-label { font-size: 13px; font-weight: bold; color: var(--brand-dark); margin-bottom: 10px; border-bottom: 1px solid var(--brand-light); padding-bottom: 4px; display: inline-block;}
+        .vocab-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill { padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; background: #F1F5F9; color: var(--text-sub); border: 1px solid #E2E8F0; }
+        .pill.brand { background: var(--brand-light); color: var(--brand-dark); border-color: #A7F3D0; }
+        
+        .sentence-list { display: flex; flex-direction: column; gap: 12px; }
+        .sentence-item { background: #fff; border-left: 3px solid var(--brand); padding: 14px; border-radius: 0 12px 12px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #F1F5F9; border-left-width: 3px;}
+        .sentence-text { font-size: 14px; color: var(--text-main); font-family: serif; margin-bottom: 10px; line-height: 1.7; }
+        .sentence-tech { font-size: 12px; color: var(--brand-dark); background: var(--brand-light); display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 500;}
+
+        /* ====== 模块3：互动翻转卡片 ====== */
+        .flip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .flip-card { height: 135px; perspective: 1000px; cursor: pointer; }
+        .flip-inner { width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; position: relative; }
+        .flip-card.active .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 16px; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        .flip-front { background: #fff; border: 1px solid #E2E8F0; }
+        .flip-back { background: var(--brand-dark); color: white; transform: rotateY(180deg); font-size: 13px; line-height: 1.6; padding: 12px;}
+        .char-name { font-size: 15px; font-weight: bold; color: var(--text-main); margin-top: 8px;}
+        .char-quest { font-size: 12px; color: var(--brand-accent); background: var(--brand-yellow); padding: 2px 8px; border-radius: 10px; margin-top: 4px;}
+
+        /* ====== 模块4：技法Tab切换 ====== */
+        .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 8px; border-radius: 10px; font-size: 14px; font-weight: bold; text-align: center; background: #F1F5F9; color: var(--text-sub); border: 1px solid transparent; outline: none; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 4px;}
+        .tab-btn.active { background: var(--brand); color: white; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); border-color: var(--brand-dark);}
+        
+        .tab-content { display: none; background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; animation: fadeIn 0.4s; box-shadow: 0 4px 6px rgba(0,0,0,0.02);}
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .method-header { font-size: 14px; color: var(--brand-dark); font-weight: bold; margin-bottom: 14px; border-bottom: 1px dashed #E2E8F0; padding-bottom: 8px; line-height: 1.5;}
+        
+        .method-step { position: relative; padding-left: 28px; margin-bottom: 14px; }
+        .method-step::before { content: ''; position: absolute; left: 8px; top: 6px; width: 8px; height: 8px; background: var(--brand-accent); border-radius: 50%; box-shadow: 0 0 0 3px var(--brand-yellow);}
+        .method-step::after { content: ''; position: absolute; left: 11px; top: 16px; width: 2px; height: calc(100% + 2px); background: #FDE68A; }
+        .method-step:last-child::after { display: none; }
+        .step-title { font-size: 14px; font-weight: bold; color: var(--text-main); }
+        .step-desc { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+        
+        .example-box { background: #F8FAFC; padding: 14px; border-radius: 8px; font-size: 13px; color: var(--text-sub); border-left: 3px solid var(--brand); margin-top: 16px; line-height: 1.6;}
+        
+        /* ====== 底部 ====== */
+        .footer { text-align: center; padding: 30px 20px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- 装饰背景 -->
+    <div class="circle-bg" style="background: var(--brand); width: 350px; height: 350px; top: -100px; left: -150px;"></div>
+    <div class="circle-bg" style="background: var(--brand-accent); width: 250px; height: 250px; top: 25%; right: -100px; opacity: 0.15;"></div>
+    <div class="circle-bg" style="background: #38BDF8; width: 300px; height: 300px; bottom: 5%; left: -100px; opacity: 0.2;"></div>
+
+    <!-- 头部引导 -->
+    <header class="fade-up" style="padding: 50px 24px 24px; text-align: center; position: relative; z-index: 10;">
+        <div style="font-size: 46px; margin-bottom: 12px; text-shadow: 0 4px 10px rgba(0,0,0,0.1);">📚</div>
+        <h1 style="font-size: 24px; font-weight: bold; color: var(--brand-dark); margin-bottom: 16px; font-family: serif;">亲爱的家长，见信好！</h1>
+        <div style="background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); padding: 20px; border-radius: 16px; text-align: left; font-size: 14px; color: var(--text-sub); box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,1); line-height: 1.7;">
+            伴读书房首本书的奇幻旅程已圆满结束。<br><br>
+            俗话说“一二年级相差不大，<strong style="color: var(--brand-accent);">三年级天上地下</strong>”。进入三年级下册，语文学习正式迎来了关键的分水岭：<br>
+            <div style="margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--brand-light);">
+                <span style="color: var(--brand-dark); font-weight: 500;">1. 课文剧增：</span>脱离拼音，字数翻倍，孩子容易读不下去；<br>
+                <span style="color: var(--brand-dark); font-weight: 500;">2. 深度阅读：</span>考试开始大面积考“概括大意”和“分析主旨”；<br>
+                <span style="color: var(--brand-dark); font-weight: 500;">3. 独立写作：</span>作文不能只写一两句话了，得写出细节。
+            </div><br>
+            面对这三大挑战，我们在首月《绿野仙踪》的阅读中，带着孩子做足了硬核储备。这份<strong style="color: var(--brand-dark);">专属成长大盘点</strong>，请您查收！
+        </div>
+    </header>
+
+    <!-- 模块1：阅读数据 -->
+    <div class="card fade-up">
+        <div class="card-title"><span>📖</span>跨越长文阅读的“耐心大关”</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 大白话解痛点：帮孩子“坐得住”</div>
+            <div class="pain-point-text">课文一旦变长，很多孩子看书就容易走神、串行。首月的核心目的，就是通过极其吸引人的长篇故事，强行拉长孩子的<span class="pain-point-highlight">“阅读耐力线”</span>，让他们不怕看密密麻麻的字。</div>
+        </div>
+        
+        <div class="data-showcase">
+            <div class="data-number">102,000</div>
+            <div class="data-label">首月累计阅读字数 (约)</div>
+        </div>
+        
+        <div class="achievement-box">
+            <strong style="color: var(--brand-dark); font-size: 14px;">🌟 达成成就：攻克《绿野仙踪》整本巨著</strong><br>
+            <span style="color: var(--text-sub); display: block; margin-top: 6px;">相当于好几本校内语文书的文字量！这10万余字的沉浸式阅读，彻底打破了孩子对“厚书”的畏难情绪。以后面对长课文，他们将底气十足。</span>
+        </div>
+    </div>
+
+    <!-- 模块2：高级词句积累 (本次核心升级部分) -->
+    <div class="card fade-up">
+        <div class="card-title"><span>✨</span>高阶文学词句弹药库</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 大白话解痛点：告别“干巴巴的流水账”</div>
+            <div class="pain-point-text">到了三年级，作文绝不能再翻来覆去写“他很害怕/开心”。我们在本月专门带着孩子积累了一批<span class="pain-point-highlight">三年级必考的高级成语和宏大环境描写词</span>，让老师阅卷时一眼看出孩子的文学底蕴。</div>
+        </div>
+
+        <div class="vocab-group">
+            <div class="vocab-label">高级神态与心理描摹（直接拔高作文立意）：</div>
+            <div class="vocab-grid">
+                <span class="pill brand">推心置腹</span><span class="pill brand">若有所思</span><span class="pill brand">不知所措</span>
+                <span class="pill">窃窃私语</span><span class="pill">随心所欲</span><span class="pill">毕恭毕敬</span><span class="pill">跌跌撞撞</span>
+            </div>
+        </div>
+        <div class="vocab-group" style="margin-bottom: 24px;">
+            <div class="vocab-label">宏大环境与绝妙细节描写（提升画面张力）：</div>
+            <div class="vocab-grid">
+                <span class="pill brand">一望无际</span><span class="pill brand">波光粼粼</span><span class="pill brand">千军万马</span>
+                <span class="pill">繁茂</span><span class="pill">萧条</span><span class="pill">绚丽多彩</span><span class="pill">奇异</span>
+            </div>
+        </div>
+
+        <div class="vocab-label">📝 经典大修辞佳句赏析：</div>
+        <div class="sentence-list">
+            <div class="sentence-item">
+                <div class="sentence-text">“从远远的北方传来一阵低沉的风声，长长的茅草在风暴来临前像波浪一样翻滚起伏。”</div>
+                <div class="sentence-tech">✅ 绝美比喻，生动描绘出风暴前动荡壮观的压迫感</div>
+            </div>
+            <div class="sentence-item">
+                <div class="sentence-text">“长着一身丝绸般的长毛，在滑稽的小鼻子两边，一对小黑眼睛闪烁着快乐的光芒。”</div>
+                <div class="sentence-tech">✅ 整体到局部细致描写，结合比喻与拟人化笔法</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块3：阅读主旨 -->
+    <div class="card fade-up">
+        <div class="card-title"><span>🧠</span>深度思考：看懂背后的意思</div>
+        <div class="pain-point-box">
+            <div class="pain-point-title">🎯 大白话解痛点：防阅读大题“丢分”</div>
+            <div class="pain-point-text">期中/期末考试必考大题：“你从故事里读懂了什么？”很多孩子读完就忘，抓不住重点。我们借书中四位主角，<span class="pain-point-highlight">提前训练孩子的归纳总结能力</span>。</div>
+        </div>
+
+        <div style="text-align: center; font-size: 12px; color: var(--brand-accent); font-weight: bold; margin-bottom: 16px; animation: pulse 2s infinite;">👇 点击下方人物卡片，查看背后的深刻寓意 👇</div>
+        <div class="flip-grid">
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front">
+                        <div style="font-size:32px;">🌾</div>
+                        <div class="char-name">稻草人</div><div class="char-quest">想要“脑子”</div>
+                    </div>
+                    <div class="flip-back">其实代表我们需要【独立思考】。不盲从别人，遇到事情要多动脑筋自己分析。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front">
+                        <div style="font-size:32px;">🪓</div>
+                        <div class="char-name">铁皮人</div><div class="char-quest">想要“心”</div>
+                    </div>
+                    <div class="flip-back">其实代表我们需要【共情与爱】。有了心，才能感受别人的喜怒哀乐，学会体谅和帮助他人。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front">
+                        <div style="font-size:32px;">🦁</div>
+                        <div class="char-name">胆小狮</div><div class="char-quest">想要“勇气”</div>
+                    </div>
+                    <div class="flip-back">真正的勇敢不是没有恐惧。而是哪怕【心惊胆战】，依然为了保护朋友奋力向前。</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="this.classList.toggle('active')">
+                <div class="flip-inner">
+                    <div class="flip-front">
+                        <div style="font-size:32px;">👧</div>
+                        <div class="char-name">多萝西</div><div class="char-quest">想要“回家”</div>
+                    </div>
+                    <div class="flip-back">实现心愿的魔法其实一直在自己身上。【向内求索，依靠自己】，才是长大的真谛。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块4：硬核写话技法 -->
+    <div class="card fade-up" style="border: 2px solid var(--brand-yellow);">
+        <div class="card-title"><span>🚀</span>四大硬核答题/写作技法</div>
+        <div class="pain-point-box" style="background: #F0FDF4; border-color: var(--brand);">
+            <div class="pain-point-title" style="color: var(--brand-dark);">🎯 降维打击：教给孩子可复制的“套路”</div>
+            <div class="pain-point-text">语文考试不是玄学。我们把复杂的阅写难题，拆解成了孩子们一听就懂的<span class="pain-point-highlight">“四步公式”</span>，直接拿到试卷上用！</div>
+        </div>
+
+        <div style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 16px;">👇 点击下方按钮，查看老师传授的具体大招 👇</div>
+        
+        <!-- Tab 按钮区 -->
+        <div class="method-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab1', this)">
+                <span style="font-size: 14px; margin-bottom: 2px;">1. 言行推导法</span>
+                <span style="font-size:11px; font-weight:normal;">(专攻: 分析人物心情)</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab2', this)">
+                <span style="font-size: 14px; margin-bottom: 2px;">2. 泰式礼仪法</span>
+                <span style="font-size:11px; font-weight:normal;">(专攻: 主观问答大题)</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">
+                <span style="font-size: 14px; margin-bottom: 2px;">3. 法国点心法</span>
+                <span style="font-size:11px; font-weight:normal;">(专攻: 这句话好在哪)</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab4', this)">
+                <span style="font-size: 14px; margin-bottom: 2px;">4. 人事果法</span>
+                <span style="font-size:11px; font-weight:normal;">(专攻: 概括文章大意)</span>
+            </button>
+        </div>
+
+        <!-- Tab 内容区 -->
+        <!-- 技法1 -->
+        <div id="tab1" class="tab-content active">
+            <div class="method-header">💡 大白话解释：文章里没直接写他多开心/多难过，怎么猜？看他做什么、说什么！</div>
+            <div class="method-step">
+                <div class="step-title">1. 找言行</div><div class="step-desc">用笔画出人物的动作和说的话。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">2. 析原因</div><div class="step-desc">脑补一下他为什么这么干。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">3. 总心情</div><div class="step-desc">用一个词总结他的真实情绪。</div>
+            </div>
+            <div class="example-box">
+                <strong style="color: var(--brand-dark);">📝 绿野仙踪实战（孩子们的运用）：</strong><br>
+                书里的狮子一出场就大吼大叫。用这个方法一分析，孩子们发现它其实内心极度缺乏安全感，是用吼叫来掩饰自己<strong style="color: var(--brand-accent);">“害怕”</strong>的心情。
+            </div>
+        </div>
+
+        <!-- 技法2 -->
+        <div id="tab2" class="tab-content">
+            <div class="method-header">💡 大白话解释：试卷常问“你赞同他吗？为什么？”别乱写，按这四步走稳拿满分。</div>
+            <div class="method-step">
+                <div class="step-title">态 (表态度)</div><div class="step-desc">第一句先写：我赞同/反对...</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">事 (说事情)</div><div class="step-desc">第二句概括：因为他做了什么事。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">理 (讲道理)</div><div class="step-desc">第三句升华：这告诉我们什么道理。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">仪 (给建议)</div><div class="step-desc">第四句口号：我们应该向他学习/引以为戒。</div>
+            </div>
+            <div class="example-box">
+                <strong style="color: var(--brand-dark);">📝 绿野仙踪实战（评多萝西打狮子）：</strong><br>
+                “我赞同多萝西（态）。危急时刻她挺身而出保护小狗（事）。这说明要勇敢相助朋友（理）。我们要向她学习（仪）。”
+            </div>
+        </div>
+
+        <!-- 技法3 -->
+        <div id="tab3" class="tab-content">
+            <div class="method-header">💡 大白话解释：“这句话用了什么修辞？好在哪里？”这道题的万能作答公式。</div>
+            <div class="method-step">
+                <div class="step-title">法 (手法)</div><div class="step-desc">指明用了比喻还是拟人。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">国 (效果)</div><div class="step-desc">固定搭配：“生动形象地...”。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">点 (特点)</div><div class="step-desc">写出了这个东西的什么特点。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">心 (感情)</div><div class="step-desc">表达了作者怎样的感情。</div>
+            </div>
+            <div class="example-box">
+                <strong style="color: var(--brand-dark);">📝 绿野仙踪实战：</strong><br>
+                “长长的茅草像波浪一样翻滚起伏”这句话，运用了比喻（法），生动形象地（国）写出风暴来临前动荡的压迫感（点），表达了作者震撼的心情（心）。
+            </div>
+        </div>
+
+        <!-- 技法4 -->
+        <div id="tab4" class="tab-content">
+            <div class="method-header">💡 大白话解释：防止孩子概括大意时啰哩啰嗦写成一篇流水账。抓准三要素！</div>
+            <div class="method-step">
+                <div class="step-title">人 (人物)</div><div class="step-desc">锁定主角是谁（千万别找错人）。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">事 (核心事件)</div><div class="step-desc">不要细节，一句话概括他去干嘛了。</div>
+            </div>
+            <div class="method-step">
+                <div class="step-title">果 (结局)</div><div class="step-desc">最后怎么样了？（这是最容易丢分的点）。</div>
+            </div>
+            <div class="example-box">
+                <strong style="color: var(--brand-dark);">📝 绿野仙踪实战（概括全书主线）：</strong><br>
+                “多萝西和朋友们（人），勇敢地前往西方寻找女巫并将其打败（事），最终成功解救了温基人（果）。”干脆利落！
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部寄语 -->
+    <div class="fade-up footer">
+        <div style="font-size: 46px; margin-bottom: 20px;">🌱</div>
+        <p style="font-family: serif; color: var(--text-main); font-size: 15px; line-height: 2;">
+            知人者智，自知者明。<br>
+            这第一阶段的奇幻旅程，<br>
+            我们见证了孩子思维与语言的双重蜕变。<br>
+            阅读是最坚实的土壤，<br>
+            静待参天大树，期待新阶段的闪耀！
+        </p>
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed #CBD5E1; display: inline-block; width: 80%;">
+            <p style="font-weight: bold; color: var(--brand-dark); font-size: 18px; letter-spacing: 1px;">您的班主任老师</p>
+            <p style="font-size: 13px; color: var(--text-light); margin-top: 6px; letter-spacing: 1px;">学而思网校 · 伴读书房</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. 滚动动画监听 (原生JS实现，100%离线可用)
+    document.addEventListener("DOMContentLoaded", function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        const elements = document.querySelectorAll('.fade-up');
+        elements.forEach(el => observer.observe(el));
+    });
+
+    // 2. 技法 Tab 切换逻辑
+    function switchTab(tabId, btnElement) {
+        const tabs = document.querySelectorAll('.tab-content');
+        const btns = document.querySelectorAll('.tab-btn');
+        
+        tabs.forEach(tab => tab.classList.remove('active'));
+        btns.forEach(btn => btn.classList.remove('active'));
+
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+</script>
+</body>
+</html>
