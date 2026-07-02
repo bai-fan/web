@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>伴读书房 - 首月收获报告</title>
+    <style>
+        /* STREAMING_CHUNK: 初始化全局与色彩变量... */
+        :root {
+            --brand-main: #047857;   /* 深翡翠绿 - 标题 */
+            --brand-light: #10B981;  /* 亮翡翠绿 - 点缀 */
+            --brand-bg: #ECFDF5;     /* 极浅绿 - 背景 */
+            --gold-main: #D97706;    /* 暖灿金 - 强调文字 */
+            --gold-bg: #FEF3C7;      /* 浅暖金 - 痛点框背景 */
+            --text-dark: #334155;    /* 主正文 */
+            --text-gray: #64748B;    /* 次正文 */
+            --page-bg: #F1F5F9;      /* 页面外层底色 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--page-bg); 
+            color: var(--text-dark); 
+            line-height: 1.8; 
+            letter-spacing: 0.5px;
+        }
+
+        /* STREAMING_CHUNK: 构建核心卡片与布局结构... */
+        .app-wrapper {
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: #FFFFFF; 
+            min-height: 100vh; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 顶部装饰背景 */
+        .header-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 280px;
+            background: linear-gradient(180deg, var(--brand-bg) 0%, rgba(255,255,255,0) 100%);
+            z-index: 0;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 10;
+            padding: 30px 20px;
+        }
+
+        /* STREAMING_CHUNK: 设计温馨卷首语模块... */
+        .greeting-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(4, 120, 87, 0.05);
+            margin-bottom: 25px;
+            border: 1px solid #f1f5f9;
+        }
+        
+        .greeting-title {
+            color: var(--brand-main);
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            font-family: "Noto Serif SC", "Songti SC", serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .greeting-text {
+            font-size: 14px;
+            color: var(--text-gray);
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        /* STREAMING_CHUNK: 核心数据与小节标题样式... */
+        .data-panel {
+            display: flex;
+            justify-content: space-between;
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid #E2E8F0;
+        }
+
+        .data-item p:first-child { font-size: 22px; font-weight: 900; color: var(--brand-main); font-family: serif; line-height: 1.2; }
+        .data-item p:last-child { font-size: 12px; color: var(--text-gray); margin-top: 4px; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 15px 0;
+        }
+        .section-icon { font-size: 20px; margin-right: 8px; }
+        .section-title { font-size: 18px; font-weight: bold; color: var(--brand-main); }
+        
+        /* STREAMING_CHUNK: 痛点解析与内容卡片排版... */
+        .pain-box {
+            background: linear-gradient(to right, var(--gold-bg), #FFFBEB);
+            border-left: 4px solid var(--gold-main);
+            border-radius: 0 8px 8px 0;
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #78350F;
+            margin-bottom: 15px;
+        }
+        .pain-box strong { color: #B45309; font-size: 14px; display: block; margin-bottom: 4px;}
+
+        /* 词句积累样式 */
+        .vocab-box { margin-bottom: 15px; }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill { 
+            background: var(--brand-bg); color: var(--brand-main); 
+            padding: 4px 12px; border-radius: 20px; 
+            font-size: 13px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2); 
+        }
+        
+        .sentence-card {
+            background: #FFFFFF; border-left: 3px solid var(--brand-light);
+            padding: 15px; border-radius: 0 10px 10px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 12px; border-top: 1px solid #F1F5F9; border-right: 1px solid #F1F5F9; border-bottom: 1px solid #F1F5F9;
+        }
+        .s-text { font-size: 14px; color: var(--text-dark); font-family: serif; margin-bottom: 8px; }
+        .s-tech { font-size: 12px; color: var(--brand-main); background: var(--brand-bg); display: inline-block; padding: 2px 8px; border-radius: 4px; }
+
+        /* STREAMING_CHUNK: 互动手风琴组件设计... */
+        .accordion-btn {
+            background: #F8FAFC; color: var(--text-dark); border: 1px solid #E2E8F0;
+            width: 100%; padding: 14px 15px; border-radius: 10px; font-size: 14px; font-weight: bold;
+            text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; transition: all 0.3s ease;
+        }
+        .accordion-btn::after { content: '▼'; font-size: 12px; color: var(--text-gray); transition: transform 0.3s; }
+        .accordion-btn.active { background: var(--brand-main); color: #FFF; border-color: var(--brand-main); }
+        .accordion-btn.active::after { content: '▲'; color: #FFF; }
+        
+        .accordion-content {
+            background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px;
+            padding: 15px; font-size: 13px; color: var(--text-gray);
+            margin-top: -4px; margin-bottom: 15px; display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .accordion-content.show { display: block; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .method-formula { font-weight: bold; color: var(--brand-main); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed #E2E8F0; }
+        .method-example { background: #F8FAFC; padding: 10px; border-radius: 6px; margin-top: 8px; border-left: 2px solid var(--gold-main); color: var(--text-dark);}
+
+        /* STREAMING_CHUNK: 优美居中落款与页脚... */
+        .elegant-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 40px 20px 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--brand-bg) 100%);
+            border-radius: 0 0 20px 20px;
+        }
+        .footer-icon { font-size: 32px; margin-bottom: 15px; }
+        .footer-poem { font-family: serif; font-size: 14px; color: var(--text-gray); line-height: 2; margin-bottom: 25px; }
+        .footer-divider { width: 40px; height: 3px; background: var(--brand-light); margin: 0 auto 20px; border-radius: 2px; }
+        .teacher-sign { font-size: 16px; font-weight: bold; color: var(--brand-main); letter-spacing: 1px; }
+        .school-sign { font-size: 12px; color: var(--text-gray); margin-top: 5px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <div class="header-bg"></div>
+        
+        <div class="content-container">
+            
+            <!-- STREAMING_CHUNK: 渲染卷首语... -->
+            <div class="greeting-card fade-up">
+                <div class="greeting-title">
+                    <span>💌</span> 展信佳
+                </div>
+                <div class="greeting-text">
+                    <p>亲爱的家长：</p>
+                    <p style="margin-top: 8px;">不知不觉，孩子们在伴读书房首本书的奇幻旅程已圆满结束。</p>
+                    <p style="margin-top: 8px;">马上要升入<strong>二年级下册</strong>，语文学习将迎来重要的“分水岭”——课文变长了，看图写话的要求也变高了。为了迎战这些挑战，我们在这个月做足了硬核储备。</p>
+                    <p style="margin-top: 8px; color: #D97706; font-weight: bold;">这份为您专属定制的【首月收获大盘点】，请您查收！</p>
+                </div>
+            </div>
+
+            <!-- STREAMING_CHUNK: 渲染阅读数据... -->
+            <div class="data-panel fade-up">
+                <div class="data-item">
+                    <p>20<span style="font-size: 14px;">天</span></p>
+                    <p>坚持阅读打卡</p>
+                </div>
+                <div class="data-item">
+                    <p>1.4<span style="font-size: 14px;">万</span></p>
+                    <p>累计阅读字数</p>
+                </div>
+                <div class="data-item">
+                    <p>1<span style="font-size: 14px;">本</span></p>
+                    <p>读完《笨狼》</p>
+                </div>
+            </div>
+
+            <!-- STREAMING_CHUNK: 渲染词句积累... -->
+            <div class="section-header fade-up">
+                <span class="section-icon">🌟</span>
+                <h2 class="section-title">词句百宝库：告别干瘪表达</h2>
+            </div>
+            <div class="pain-box fade-up">
+                <strong>💡 老师说：</strong>
+                到了二年级，写话绝不能再翻来覆去只写“今天我很开心”。我们积累的这些高级词汇，能让老师阅卷时一眼看到孩子的文学底蕴！
+            </div>
+            
+            <div class="vocab-box fade-up">
+                <p class="text-sm font-bold text-dark mb-2" style="font-size: 14px; margin-bottom: 10px;">🎈 精准神态与动作描写：</p>
+                <div class="pill-container">
+                    <span class="pill">慌慌张张</span><span class="pill">满头大汗</span><span class="pill">眉开眼笑</span>
+                    <span class="pill">叮叮当当</span><span class="pill">可怜巴巴</span><span class="pill">舒舒服服</span>
+                    <span class="pill">坐立不安</span><span class="pill">不由自主</span><span class="pill">神气十足</span><span class="pill">小心翼翼</span>
+                </div>
+            </div>
+
+            <div class="vocab-box fade-up" style="margin-top: 20px;">
+                <p class="text-sm font-bold text-dark mb-2" style="font-size: 14px; margin-bottom: 10px;">📝 神仙佳句赏析：</p>
+                <div class="sentence-card">
+                    <p class="s-text">“白色的小木屋，明亮的小木窗，窗子上挂着树叶编成的窗帘，春夏秋冬不停地换。”</p>
+                    <span class="s-tech">✅ 技法：整体到局部描写，画面感极强</span>
+                </div>
+                <div class="sentence-card">
+                    <p class="s-text">“雨点敲打着小木屋，小木屋‘叮叮当当’，好像在唱歌。”</p>
+                    <span class="s-tech">✅ 技法：拟声词 + 拟人化，让文字活泼起来</span>
+                </div>
+            </div>
+
+            <!-- STREAMING_CHUNK: 渲染深度思考... -->
+            <div class="section-header fade-up">
+                <span class="section-icon">🧠</span>
+                <h2 class="section-title">深度思考：从书中照见自我</h2>
+            </div>
+            <div class="pain-box fade-up">
+                <strong>💡 老师说：</strong>
+                防止孩子在阅读大题里“丢分”，我们不仅读故事，更训练孩子提取文章中心思想的归纳能力。
+            </div>
+            <div class="greeting-card fade-up" style="padding: 15px 20px;">
+                <ul style="list-style-type: none; padding: 0; font-size: 14px; color: var(--text-dark);">
+                    <li style="margin-bottom: 10px;">🌱 <strong>关于犯错：</strong>错误是成长的脚印，在犯错中长出翅膀。</li>
+                    <li style="margin-bottom: 10px;">💪 <strong>关于困难：</strong>保持好奇与行动力，办法总比困难多！</li>
+                    <li>👀 <strong>关于他人：</strong>人不可貌相，学会发现身边每个人的优点。</li>
+                </ul>
+            </div>
+
+            <!-- STREAMING_CHUNK: 渲染写作技法... -->
+            <div class="section-header fade-up">
+                <span class="section-icon">✍️</span>
+                <h2 class="section-title">硬核写话：四大通关秘籍</h2>
+            </div>
+            <div class="pain-box fade-up">
+                <strong>💡 老师说：</strong>
+                看图写话不是玄学。我们把复杂的写作难题，拆解成了孩子一听就懂的“公式”，直接拿到考卷上用！<br><span style="font-size: 12px; color:#A16207; margin-top:4px; display:inline-block;">（点击下方按钮查看秘籍详情 👇）</span>
+            </div>
+
+            <button class="accordion-btn fade-up" onclick="toggleAcc(this)">1. 故事称号法 (专攻：写人)</button>
+            <div class="accordion-content">
+                <div class="method-formula">公式：有(外貌) → 点(特点) → 事(事例) → 情(情感)</div>
+                <p>人物描写告别干瘪，让人物形象立体丰满。</p>
+                <div class="method-example"><strong>📝 实战：</strong>爸爸有一双眯眯眼，他是个“万能修理工”，家里坏的东西总能修好，我爱爸爸。</div>
+            </div>
+
+            <button class="accordion-btn fade-up" onclick="toggleAcc(this)">2. 比喻法 (专攻：写景)</button>
+            <div class="accordion-content">
+                <div class="method-formula">公式：找景物 → 找相似物 → 用“好像/像”链接</div>
+                <p>锻炼观察力，让风景描写生动形象。</p>
+                <div class="method-example"><strong>📝 实战：</strong>校园的大草坪碧绿碧绿的，好像一块柔软的绿地毯。</div>
+            </div>
+
+            <button class="accordion-btn fade-up" onclick="toggleAcc(this)">3. 口诀法 (专攻：犯错类写话)</button>
+            <div class="accordion-content">
+                <div class="method-formula">公式：去玩 → 犯错 → 批评劝导 → 收获道理</div>
+                <p>将看图说话拆解为起承转合，逻辑极度严密。</p>
+                <div class="method-example"><strong>📝 实战：</strong>小明乱扔香蕉皮，小红劝导他，小明改正后明白了要爱护环境的道理。</div>
+            </div>
+
+            <button class="accordion-btn fade-up" onclick="toggleAcc(this)">4. 关联词法 (专攻：表达观点)</button>
+            <div class="accordion-content">
+                <div class="method-formula">公式：亮明观点 → 因为...所以... → 总结强调</div>
+                <p>培养思辨能力，回答阅读主观题时条理清晰。</p>
+                <div class="method-example"><strong>📝 实战：</strong>大声打电话不对。因为它打扰别人，所以是不文明行为。</div>
+            </div>
+
+            <!-- STREAMING_CHUNK: 渲染长线规划与页脚... -->
+            <div class="section-header fade-up">
+                <span class="section-icon">🎯</span>
+                <h2 class="section-title">长线赋能：不止于当下的成长</h2>
+            </div>
+            <div class="greeting-card fade-up" style="padding: 15px 20px;">
+                <p style="font-size: 14px; color: var(--text-dark); margin-bottom: 8px;">伴读书房为您和孩子规划了清晰的成长路径：</p>
+                <ul style="padding-left: 18px; font-size: 13px; color: var(--text-gray); line-height: 2;">
+                    <li><strong>习惯基石：</strong>用趣味故事拉长阅读专注时间。</li>
+                    <li><strong>方法进阶：</strong>掌握批注与赏析，无缝衔接校内考点。</li>
+                    <li><strong>素养飞跃：</strong>独立思考，完成逻辑严密的段落表达。</li>
+                </ul>
+            </div>
+
+            <div class="elegant-footer fade-up">
+                <div class="footer-icon">🌱</div>
+                <p class="footer-poem">
+                    阅读是一粒神奇的种子，<br>
+                    我们在今天播下最坚实的土壤。<br>
+                    感谢您的用心陪伴，<br>
+                    让我们期待宝贝新学期的闪耀！
+                </p>
+                <div class="footer-divider"></div>
+                <p class="teacher-sign">您的班主任老师</p>
+                <p class="school-sign">学而思网校 · 伴读书房</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- STREAMING_CHUNK: 交互逻辑与动画脚本... -->
+    <script>
+        // 滚动渐现动画
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        });
+
+        // 丝滑的手风琴切换逻辑
+        function toggleAcc(element) {
+            // 获取紧接在按钮后面的内容框
+            const content = element.nextElementSibling;
+            
+            // 如果当前是打开状态，则关闭
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                element.classList.remove('active');
+                return;
+            }
+
+            // 先关闭所有的内容框和按钮高亮
+            document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.accordion-btn').forEach(el => el.classList.remove('active'));
+
+            // 打开当前点击的内容框并高亮按钮
+            content.classList.add('show');
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+```eof
