@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>伴读书房 - 首月收获报告</title>
+    <style>
+        :root {
+            --primary: #115E59;     /* 学术墨绿 - 主视觉 */
+            --primary-light: #CCFBF1; /* 极浅绿 - 背景点缀 */
+            --accent: #B45309;      /* 琥珀金 - 重点强调 */
+            --accent-light: #FEF3C7;/* 浅暖金 - 提示框底色 */
+            --text-main: #334155;   /* 正文深灰 */
+            --text-sub: #64748B;    /* 次级文字 */
+            --border-color: #E2E8F0;/* 分割线 */
+            --surface: #F8FAFC;     /* 卡片底色 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif; 
+            background-color: #F1F5F9; 
+            color: var(--text-main); 
+            line-height: 1.7; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .report-wrapper {
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: #FFFFFF; 
+            min-height: 100vh; 
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            padding: 40px 24px 30px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .header p {
+            font-size: 13px;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+        }
+
+        .container { padding: 24px; }
+
+        .letter-box {
+            font-size: 14px;
+            color: var(--text-main);
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        .letter-box p { margin-bottom: 10px; }
+        .letter-highlight {
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px 15px;
+            margin-bottom: 35px;
+        }
+        .data-item { text-align: center; flex: 1; border-right: 1px solid var(--border-color); }
+        .data-item:last-child { border-right: none; }
+        .data-value { font-size: 22px; font-weight: bold; color: var(--primary); font-family: "Georgia", serif; line-height: 1.2; }
+        .data-label { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+
+        .section { margin-bottom: 35px; }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 16px;
+            background: var(--primary);
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .insight-box {
+            background: var(--accent-light);
+            color: #92400E;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .insight-box strong { color: var(--accent); }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .quote-box {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .quote-text {
+            font-family: "Noto Serif SC", "Songti SC", serif;
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+        .quote-analysis {
+            font-size: 12px;
+            color: var(--accent);
+            background: #FFFBEB;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .method-item {
+            margin-bottom: 20px;
+        }
+        .method-name {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+        }
+        .method-name span {
+            color: var(--primary);
+            margin-right: 6px;
+            font-family: Georgia, serif;
+            font-size: 16px;
+        }
+        .method-logic {
+            background: var(--surface);
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-sub);
+            border-radius: 4px 4px 0 0;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+        }
+        .method-practice {
+            background: #FFFFFF;
+            padding: 12px;
+            font-size: 13px;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 4px 4px;
+        }
+        .method-practice strong { color: var(--primary); }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--surface);
+            margin-top: 20px;
+        }
+        .footer-text {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 2;
+            margin-bottom: 20px;
+        }
+        .signature {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .signature-sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="report-wrapper">
+        <!-- 报头 -->
+        <div class="header">
+            <h1>首月阅读与素养大盘点</h1>
+            <p>伴读书房 · 学情反馈专刊</p>
+        </div>
+        
+        <div class="container">
+            <!-- 卷首语 -->
+            <div class="letter-box">
+                <p>亲爱的家长，展信佳：</p>
+                <p>在伴读书房的这一个月里，孩子们跟随《笨狼的故事》完成了一次关于纯真与智慧的纸上旅行。</p>
+                <p>随着孩子即将迈入<strong>二年级上册</strong>，语文学习的重心正发生着深刻的转移：从拼音识图，正式过渡到<strong>纯文字长篇阅读与段落结构化表达</strong>。为了平稳度过这个跨越期，我们为您梳理了首月的核心学情与素养积淀。</p>
+                <div class="letter-highlight">
+                    💡 学习预告：下阶段精读丛书《长袜子皮皮》已就绪，全新的想象力之旅即将解锁！
+                </div>
+            </div>
+
+            <!-- 核心数据 -->
+            <div class="dashboard">
+                <div class="data-item">
+                    <div class="data-value">20</div>
+                    <div class="data-label">坚持天数</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-value">1.4w</div>
+                    <div class="data-label">阅读字数</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-value">1</div>
+                    <div class="data-label">完成整本书</div>
+                </div>
+            </div>
+
+            <!-- 板块一 -->
+            <div class="section">
+                <div class="section-title">阅读耐力：跨越“读不动”的门槛</div>
+                <div class="insight-box">
+                    <strong>对标二上要求：</strong>二年级课文篇幅显著增加，且拼音比重下降。通过1.4万字的整本书精读，我们帮助孩子克服了对“厚书”的畏难情绪，建立起文字阅读的专注力底座。
+                </div>
+            </div>
+
+            <!-- 板块二 -->
+            <div class="section">
+                <div class="section-title">词汇与语感：构建书面表达库</div>
+                <div class="insight-box">
+                    <strong>对标二上要求：</strong>改变口语化的表达习惯，积累书面词汇（特别是神态与动作描写），为看图写话提供精准的“词汇弹药”。
+                </div>
+                
+                <p style="font-size: 13px; font-weight: bold; margin-bottom: 10px;">高频描写词汇提炼：</p>
+                <div class="tags">
+                    <span class="tag">慌慌张张</span><span class="tag">满头大汗</span><span class="tag">眉开眼笑</span>
+                    <span class="tag">叮叮当当</span><span class="tag">可怜巴巴</span><span class="tag">舒舒服服</span>
+                    <span class="tag">坐立不安</span><span class="tag">神气十足</span><span class="tag">小心翼翼</span>
+                </div>
+
+                <p style="font-size: 13px; font-weight: bold; margin: 16px 0 10px;">经典句式拆解赏析：</p>
+                <div class="quote-box">
+                    <p class="quote-text">“白色的小木屋，明亮的小木窗，窗子上挂着树叶编成的窗帘，春夏秋冬不停地换。”</p>
+                    <span class="quote-analysis">手法应用：由整体到局部的递进描写，画面层次分明。</span>
+                </div>
+                <div class="quote-box">
+                    <p class="quote-text">“雨点敲打着小木屋，小木屋‘叮叮当当’，好像在唱歌。”</p>
+                    <span class="quote-analysis">手法应用：拟声词结合拟人化，化静为动。</span>
+                </div>
+            </div>
+
+            <!-- 板块三 -->
+            <div class="section">
+                <div class="section-title">结构化写作：四大核心技法落地</div>
+                <div class="insight-box">
+                    <strong>对标二上要求：</strong>从“写清楚一句话”进阶为“写出有逻辑、有细节的一段话”。我们将写作方法提炼为可复用的结构公式。
+                </div>
+
+                <div class="method-item">
+                    <div class="method-name"><span>01</span> 故事称号法 (专攻写人)</div>
+                    <div class="method-logic">结构逻辑：外貌描摹 → 提炼称号特点 → 典型事例印证 → 情感升华</div>
+                    <div class="method-practice"><strong>实战输出：</strong>爸爸有一双眯眯眼，他是个“万能修理工”，家里坏的东西总能修好，我爱爸爸。</div>
+                </div>
+
+                <div class="method-item">
+                    <div class="method-name"><span>02</span> 比喻法 (专攻写景)</div>
+                    <div class="method-logic">结构逻辑：观察景物特征 → 联想相似事物 → 使用比喻词“好像/像”链接</div>
+                    <div class="method-practice"><strong>实战输出：</strong>校园的大草坪碧绿碧绿的，好像一块柔软的绿地毯。</div>
+                </div>
+
+                <div class="method-item">
+                    <div class="method-name"><span>03</span> 口诀法 (专攻犯错类看图写话)</div>
+                    <div class="method-logic">结构逻辑：兴高采烈去玩(起) → 不小心犯错(承) → 批评与改正(转) → 收获与成长(合)</div>
+                    <div class="method-practice"><strong>实战输出：</strong>小明乱扔香蕉皮，在小红的劝导下，小明及时改正并明白了爱护环境的道理。</div>
+                </div>
+
+                <div class="method-item">
+                    <div class="method-name"><span>04</span> 关联词法 (专攻观点表达)</div>
+                    <div class="method-logic">结构逻辑：清晰亮明观点 → 运用“因为...所以...”阐述因果 → 再次总结结论</div>
+                    <div class="method-practice"><strong>实战输出：</strong>我认为大声打电话不对。因为这会打扰他人，所以这是一种不文明的行为。</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 极简落款 -->
+        <div class="footer">
+            <p class="footer-text">
+                阅读不仅是知识的输入，<br>
+                更是逻辑与情感的重塑。<br>
+                感谢您的耐心陪伴与托付，<br>
+                我们期待宝贝在新学期的长足进步。
+            </p>
+            <div class="signature">您的班主任老师</div>
+            <div class="signature-sub">学而思网校 · 伴读书房</div>
+        </div>
+    </div>
+
+</body>
+</html>
